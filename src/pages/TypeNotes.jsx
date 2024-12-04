@@ -5,6 +5,7 @@ import { useAuth } from "../state/AuthContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import useNoteSet from "../state/useNoteSet";
+import { useParams } from "react-router-dom";
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -15,7 +16,7 @@ function shuffleArray(array) {
 }
 
 const TypeNotes = () => {
-  const noteSetId = window.location.pathname.split("/type/").pop();
+  const { noteSetId } = useParams();
   const [targetText, setTargetText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [notesData, setNotesData] = useNoteSet(noteSetId);

@@ -3,8 +3,8 @@ import NoteSetsView from "../components/NoteSetsView";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuth } from "../state/AuthContext";
-import { useNoteSets } from "../state/useNoteSet";
 import { Link } from "react-router-dom";
+import useNoteSets from "../state/useNoteSets";
 
 const Home = () => {
   const user = useAuth();

@@ -6,16 +6,17 @@ import EditNoteSet from "./pages/EditNoteSet.jsx";
 import TypeNotes from "./pages/TypeNotes.jsx";
 import Login from "./pages/Login.jsx";
 import { AuthProvider } from "./state/AuthContext.jsx";
+import { BASE_PATH } from "../config.js";
 
 function App() {
   return (
     <AuthProvider>
       <Layout>
-        <Router basename="">
+        <Router basename={BASE_PATH}>
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route path="/edit/*" element={<EditNoteSet />} />
-            <Route path="/type/*" element={<TypeNotes />} />
+            <Route path="/edit/:noteSetId" element={<EditNoteSet />} />
+            <Route path="/type/:noteSetId" element={<TypeNotes />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </Router>

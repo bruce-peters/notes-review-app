@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -10,6 +11,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { useNavigate } from "react-router";
 
 const debugNoteSet = {
   noteSetName: "Debug Notes",
@@ -21,6 +23,7 @@ const debugNoteSet = {
 const useNoteSet = (noteSetId) => {
   const user = useAuth();
   const [noteSetData, setNoteSetData] = useState(null);
+  const navigate = useNavigate();
 
   // Fetching the data
   useEffect(() => {
@@ -33,6 +36,7 @@ const useNoteSet = (noteSetId) => {
             `users/${user.currentUser.uid}/note-sets`,
             noteSetId
           );
+          console.log("Note set ref", noteSetRef);
           const docSnapshot = await getDoc(noteSetRef);
 
           if (docSnapshot.exists()) {
@@ -55,7 +59,7 @@ const useNoteSet = (noteSetId) => {
   }, [user, noteSetId]);
 
   //Saving the data
-  const handleNoteSetDataSaved = async () => {
+  const saveNoteSetData = async (newNoteSetData) => {
     console.log("Saving Note Set Data");
     try {
       if (user && user.currentUser) {
@@ -71,20 +75,20 @@ const useNoteSet = (noteSetId) => {
           await setDoc(
             noteSetRef,
             {
-              noteSetName: noteSetData.noteSetName,
-              noteSetId: noteSetData.noteSetId,
-              noteSetRaw: noteSetData.noteSetRaw,
-              noteSetFacts: noteSetData.noteSetFacts,
+              noteSetName: newNoteSetData.noteSetName,
+              noteSetId: newNoteSetData.noteSetId,
+              noteSetRaw: newNoteSetData.noteSetRaw,
+              noteSetFacts: newNoteSetData.noteSetFacts,
             },
             { merge: true }
           );
         } else {
           // Document does not exist, create a new one
           await setDoc(noteSetRef, {
-            noteSetName: noteSetData.noteSetName,
-            noteSetId: noteSetData.noteSetId,
-            noteSetRaw: noteSetData.noteSetRaw,
-            noteSetFacts: noteSetData.noteSetFacts,
+            noteSetName: newNoteSetData.noteSetName,
+            noteSetId: newNoteSetData.noteSetId,
+            noteSetRaw: newNoteSetData.noteSetRaw,
+            noteSetFacts: newNoteSetData.noteSetFacts,
           });
         }
       }
@@ -95,32 +99,23 @@ const useNoteSet = (noteSetId) => {
     }
   };
 
-  return [noteSetData, setNoteSetData, handleNoteSetDataSaved];
-};
-
-export const useNoteSets = () => {
-  const user = useAuth();
-  const [noteSets, setNoteSets] = useState([]);
-  if (noteSets.length === 0) {
+  const deleteNoteSet = async () => {
     try {
       if (user && user.currentUser) {
-        const noteSetRef = collection(
+        const noteSetRef = doc(
           db,
-          `users/${user.currentUser.uid}/note-sets`
+          `users/${user.currentUser.uid}/note-sets/${noteSetId}`
         );
-        getDocs(noteSetRef).then((querySnapshot) => {
-          const noteSetsData = [];
-          querySnapshot.forEach((doc) => {
-            noteSetsData.push({ ...doc.data(), noteSetId: doc.id });
-          });
-          setNoteSets(noteSetsData);
-        });
+        await deleteDoc(noteSetRef);
+        navigate("/");
       }
     } catch (error) {
+      alert("Error deleting note set");
       console.log(error);
     }
-  }
-  return noteSets;
+  };
+
+  return [noteSetData, setNoteSetData, saveNoteSetData, deleteNoteSet];
 };
 
 export default useNoteSet;
