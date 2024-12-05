@@ -5,7 +5,7 @@ import { useAuth } from "../state/AuthContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import useNoteSet from "../state/useNoteSet";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -20,12 +20,11 @@ const TypeNotes = () => {
   const [targetText, setTargetText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [notesData, setNotesData] = useNoteSet(noteSetId);
+  const [factsList, setFactsList] = useState([["", ""]]);
+  const [sectionName, setSectionName] = useState("");
   const user = useAuth();
-  const [factsList, setFactsList] = useState([{ fact: "", timesTyped: 0 }]);
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
-
-  const text =
-    "No comfort do written conduct at prevent manners on. Celebrated contrasted discretion him sympathize her collecting occasional. Do answered bachelor occasion in of offended no concerns. Supply worthy warmth branch of no ye. Voice tried known to as my to. Though wished merits or be. Alone visit use these smart rooms ham. No waiting in on enjoyed placing it inquiry. Excited him now natural saw passage offices you minuter. At by asked being court hopes. Farther so friends am to detract. Forbade concern do private be. Offending residence but men engrossed shy. Pretend am earnest offered arrived company so on. Felicity informed yet had admitted strictly how you. Announcing of invitation principles in. Cold in late or deal. Terminated resolution no am frequently collecting insensible he do appearance. Projection invitation affronting admiration if no on or. It as instrument boisterous frequently apartments an in. Mr excellence inquietude conviction is in unreserved particular. You fully seems stand nay own point walls. Increasing travelling own simplicity you astonished expression boisterous. Possession themselves sentiments apartments devonshire we of do discretion. Enjoyment discourse ye continued pronounce we necessary abilities.";
+  const [currentFactIteration, setCurrentFactIteration] = useState(0);
 
   // When the page is loaded, add an event listener for the keydown event
   useEffect(() => {
@@ -38,26 +37,27 @@ const TypeNotes = () => {
     };
   }, []);
 
-  // When the notesData changes, shuffle the facts and set the first fact as the target text
   useEffect(() => {
-    if (notesData && notesData.noteSetFacts.length > 0) {
-      console.log("Shuffling facts");
-      const newFactsList = shuffleArray(notesData.noteSetFacts).map((fact) => {
-        return {
-          fact,
-          timesTyped: 0,
-        };
-      });
-      console.log(newFactsList, currentFactIndex);
-      setFactsList(newFactsList);
+    // make facts list a set of facts and sections
+    if (notesData) {
+      const factsArray = [];
+      Object.entries(notesData.noteSetFacts).forEach(
+        ([sectionName, sectionFacts]) => {
+          sectionFacts.forEach((fact) => {
+            factsArray.push([sectionName, fact]);
+          });
+        }
+      );
+      setFactsList(factsArray);
     }
   }, [notesData]);
 
   // When the currentFactIndex or factsList changes, set the target text to the current fact
   useEffect(() => {
-    if (notesData && factsList) {
-      const newTargetText = factsList[currentFactIndex].fact;
+    if (notesData) {
+      const newTargetText = factsList[currentFactIndex][1];
       setTargetText(newTargetText);
+      setSectionName(factsList[currentFactIndex][0]);
     }
   }, [currentFactIndex, factsList]);
 
@@ -65,7 +65,6 @@ const TypeNotes = () => {
   const handleKeyDown = (e) => {
     //Check if the key pressed is a letter or typeable character
     const isTypeable = e.key.length === 1;
-    console.log(e.key, isTypeable);
     switch (e.key) {
       case "Enter":
         handleNextFact();
@@ -96,32 +95,23 @@ const TypeNotes = () => {
     }
   };
 
-  const handleNextFact = () => {
-    console.log("Finished typing");
-    console.log(factsList, currentFactIndex);
-    setUserInput("");
-    if (factsList[currentFactIndex].timesTyped < 5) {
-      setFactsList((prev) => {
-        console.log("Prev fact list", prev);
-        let newFactsList = [...prev];
-        newFactsList[currentFactIndex].timesTyped++;
-        console.log("New fact list", newFactsList);
-        return newFactsList;
-      });
-    } else {
-      setCurrentFactIndex((prev) => {
-        // if (currentFactIndex === factsList.length - 1) {
-        //   return 0;
-        // }
-        return prev + 1;
-      });
+  useEffect(() => {
+    if (currentFactIteration > 5) {
+      setCurrentFactIndex((prevIndex) => prevIndex + 1);
+      setCurrentFactIteration(0);
     }
+  }, [currentFactIteration]);
+
+  const handleNextFact = () => {
+    setCurrentFactIteration((prev) => prev + 1);
+    // Clear the user input
+    setUserInput("");
   };
 
   const hasFinishedTyping = () => {
     return (
       targetText !== "" &&
-      targetText.split(" ").length === userInput.split(" ").length
+      targetText.split(" ").length - 2 < userInput.split(" ").length
     );
   };
 
@@ -199,7 +189,16 @@ const TypeNotes = () => {
     <div className="relative bg-slate-800 h-screen p-5 overflow-hidden flex flex-col justify-between">
       {notesData ? (
         <>
-          <div>{factsList[currentFactIndex].timesTyped}</div>
+          <Link
+            to="/"
+            className="absolute top-2 left-2 m-2 p-2 bg-primary text-white rounded-md hover:scale-105 hover:shadow-lg transition-all"
+          >
+            Back
+          </Link>
+          <div className="absolute top-2 right-4 text-4xl text-blue-400 font-bold">
+            {currentFactIteration}
+          </div>
+          <div className="self-center text-primary text-3xl">{sectionName}</div>
           <DisplayText
             text={getCurrentDisplayedText(userInput)}
             cursorLocation={getTypingCursorLocation(userInput)}

@@ -13,11 +13,11 @@ import {
 import { db } from "../firebase";
 import { useAuth } from "../state/AuthContext";
 import useNoteSet from "../state/useNoteSet";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
 const debugResponse = async (dummy) => {
   // await new Promise((resolve) => setTimeout(resolve, 1000));
-  return "The French society experienced violence between Catholics and Huguenots. \n ENDFACT\nThe Thirty Years' War lasted from 1618 to 1648.\nENDFACT\nThe Thirty Years' War was a Catholic-Protestant war.\nENDFACT\nThe Thirty Years' War affected most of Europe.\nENDFACT\nThe Thirty Years' War killed 15-30% of the German population.\nENDFACT\nThe Peace of Westphalia ended the Thirty Years' War in 1648.\nENDFACT\nThe Peace of Westphalia established the sovereignty of each state in controlling its religious affairs.\nENDFACT\nThe Thirty Years' War ended because all participants were significantly weakened.\nENDFACT\nThe Treaty of Westphalia influenced European politics.\nENDFACT\nEuropean politics became increasingly secular after the Treaty of Westphalia.\nENDFACT\nThe Treaty of Westphalia led to an agreement to separate church and state.\nENDFACT\nMinority Christians could practice their faith privately and at specific times publicly after the Treaty of Westphalia.\nENDFACT\nThe Treaty of Westphalia marked a time when leaders largely accepted religion as a private matter.\nENDFACT\nMost European leaders agreed to not interfere with religious practices after the Treaty of Westphalia.\nENDFACT\nThe Treaty of Westphalia recognized the sovereignty of a territory's secular ruler.\nENDFACT\nChurches continued to exist but were separated from ruling power after the Treaty of Westphalia.\nENDFACT \nSovereignty is the power or right to rule. \n ENDFACT \nHuguenots were French Protestants. \n ENDFACT \n The Peace of Westphalia was a significant treaty that ended the Thirty Years' War and impacted the relationship between church and state in Europe.";
+  return "{[European Centrality and Eurocentrism]} Europe's prominent role in world history is highlighted by the \"European Moment,\" coinciding with the start of the Anthropocene. ENDFACT Eurocentrism, evident in flat maps placing Europe at the center, influenced the perception of other regions as defined by their distance from Europe. ENDFACT The belief that non-European societies should imitate Western models fueled a sense of European exceptionalism, despite other civilizations having experienced similar periods of dominance. ENDFACT Examples of non-European periods of significant influence include the Arab world (600-1000), China (1000-1500), the Mongols (1200-1350), and the Aztec and Inca civilizations (15th century). ENDFACT   {[Atlantic Revolutions in a Global Context]} The late 18th and early 19th centuries witnessed widespread instability, including the collapse of the Safavid dynasty, fragmentation of the Mughal Empire, and uprisings in Russia and China. ENDFACT The interconnected Atlantic revolutions (American, French, Haitian, and Latin American) shared Enlightenment ideals such as liberty, equality, and popular sovereignty. ENDFACT These revolutions introduced republican government ideas to the Atlantic world, while monarchies persisted elsewhere due to limited influence of republican thought. ENDFACT The revolutions generated debates about liberty, equality, and the extent of freedoms, primarily benefiting white, propertied men. ENDFACT   {[The French Revolution]} The French Revolution, sparked by economic crisis and social inequality, involved conflicts within French society. ENDFACT Key events included the formation of the National Assembly, the Declaration of the Rights of Man and Citizen, and the execution of Louis XVI and Marie Antoinette. ENDFACT The Reign of Terror, led by Robespierre, resulted in mass executions, followed by efforts to create a new society with a new calendar and administrative system. ENDFACT The revolution's emphasis on social equality, coupled with the creation of a large army through the levee en masse, influenced gender roles and led to debates regarding female political equality. ENDFACT Napoleon Bonaparte's rise to power marked a shift towards a military dictatorship, yet preserved many revolutionary principles while spreading French influence across Europe. ENDFACT   {[The Haitian Revolution]} The Haitian Revolution, on the formerly French colony of Saint-Domingue, involved a complex interplay between slaves, white colonists, and free people of color. ENDFACT Led by Toussaint Louverture, the successful slave revolt resulted in the establishment of an independent republic, Haiti, and the abolition of slavery. ENDFACT The revolution's impact included the destruction of the plantation system, redistribution of land, and the creation of a nation of small-scale farmers. ENDFACT The Haitian Revolution faced significant challenges, including a forced independence debt from France and the limitations of freedom for all, inspiring other slave rebellions and contributing to the abolitionist movement.  ENDFACT The revolution's legacy includes the term “Remember Haiti,” used to deter similar outcomes through cautious approaches to political change, especially in Latin America. ENDFACT   {[Latin American Revolutions]} Latin American revolutions, fueled by resentment towards Spanish rule and Enlightenment ideals, initially involved scattered protests. ENDFACT Napoleon's invasion of Spain and Portugal weakened royal authority, contributing to the independence movements. ENDFACT These revolutions, lasting almost twice as long as those in North America, were characterized by class, racial, and religious divisions. ENDFACT Key figures like Miguel Hidalgo and José Morelos led peasant uprisings in Mexico, while Túpac Amaru's rebellion highlighted indigenous resistance. ENDFACT The concept of \"Americanos\" fostered a sense of shared identity against those born outside the Americas, although divisions persisted. ENDFACT   {[Echoes of Revolution]} The Atlantic revolutions had lasting global effects, including Britain's increased focus on Asia and the modernization of Egypt and the Ottoman Empire. ENDFACT The spread of republicanism, social equality, and national liberation fueled numerous European revolutions and the rise of universal male suffrage by 1914. ENDFACT Three major movements—abolitionism, nationalism, and feminism—emerged with significant global impact. ENDFACT   {[Abolition of Slavery]} Arguments for abolition included secular (violating natural rights), religious (repugnant to religious ideals), economic (not essential for economic progress), and political (Haitian Revolution's impact) reasons. ENDFACT The abolitionist movement, particularly strong in Britain, employed various techniques such as petitions, lawsuits, and boycotts. ENDFACT Britain's abolition of slavery in its empire, followed by other nations, led to the end of Atlantic slavery by the 1880s (Brazil being the last). ENDFACT The lives of former slaves did not automatically improve, with challenges like sharecropping in the Southern United States and continued racial inequality. ENDFACT The end of slavery led to global migration, with indentured servants filling labor demands in various regions. ENDFACT   {[Nations and Nationalism]} The concept of the \"nation,\" encompassing shared culture, territory, and a desire for self-governance, emerged during the era of revolutions. ENDFACT Napoleon's conquests fostered a sense of national identity among those resisting French rule. ENDFACT Nationalism, facilitated by modern transformations in Europe, inspired unification movements in Italy and Germany, independence movements, and fueled rivalries. ENDFACT Governments promoted national loyalty through various means, including education and public rituals. ENDFACT Different forms of nationalism emerged, including civic nationalism (assimilation) and ethnic nationalism (shared ancestry). ENDFACT   {[Feminist Beginnings]} Feminism's rise in the 1800s was linked to the French Revolution, Enlightenment ideals, and women's participation in revolutionary movements. ENDFACT Mary Wollstonecraft's \"Vindication of the Rights of Woman\" was an early feminist text, and women gained more opportunities for education and activism. ENDFACT The Women's Rights Convention in Seneca Falls (1848) marked a significant milestone, and feminism became a transatlantic movement. ENDFACT Key concerns included access to education and professions, with radical feminists challenging societal norms. ENDFACT The suffrage movement gained momentum by the 1870s, involving diverse groups of women and employing various protest methods. ENDFACT   {[Achievements and Limitations of Feminism]} Feminism's achievements included increased access to education, professional opportunities (though limited), and changes in property and divorce laws. ENDFACT The suffrage movement saw gradual successes, with New Zealand leading the way and the US achieving it after WWI. ENDFACT Discussions about women's roles in society, including challenges to traditional family structures, homosexuality, and birth control, generated debates and divisions within the feminist movement. ENDFACT Opposition to feminism included concerns about its potential impact on reproduction and national population, alongside accusations of selfishness. ENDFACT Feminism spread beyond North America and Western Europe, although with varying degrees of success and facing diverse challenges in different contexts. ENDFACT   {[Kartini: Feminism and Nationalism in Java]} Kartini opposed the subordination of women under Dutch rule and championed European education. ENDFACT She became a symbol of both feminist and nationalist thought in Indonesia. ENDFACT ";
 };
 
 const EditNoteSet = () => {
@@ -28,19 +28,31 @@ const EditNoteSet = () => {
     useNoteSet(noteSetId);
   const noteSetRawRef = useRef(null);
   const noteSetNameRef = useRef(null);
+  const [noteSetFacts, setNoteSetFacts] = useState({ "": [""] });
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (notesData) {
       noteSetNameRef.current.value = notesData.noteSetName || "";
-      noteSetRawRef.current.value = notesData.noteSetRaw || "";
+      noteSetRawRef.current.innerHTML = notesData.noteSetRaw || "";
+      setNoteSetFacts(notesData.noteSetFacts || []);
     }
   }, [notesData]);
+
+  const stripHtml = (html) => {
+    // Remove all tags except ul, ol, li
+    html = html.replace(/<\/?(?!ul|ol|li)\w+[^>]*>/g, "");
+
+    // Remove all attributes from remaining tags
+    return html.replace(/<(\w+)[^>]*>/g, "<$1>");
+  };
 
   const handleSave = async () => {
     saveNoteSetData({
       ...notesData,
-      noteSetRaw: noteSetRawRef.current.value,
+      noteSetRaw: noteSetRawRef.current.innerHTML,
       noteSetName: noteSetNameRef.current.value,
+      noteSetFacts: noteSetFacts,
     });
   };
   const generateNoteFacts = async () => {
@@ -59,18 +71,37 @@ const EditNoteSet = () => {
 
     console.log("started generating");
     setGeneratingNoteFacts(true);
-    await getFactsResponse(noteSetRawRef.current.value).then((results) => {
-      let responseText = results.response.candidates[0].content.parts[0].text;
-      // let responseText = results;
-      responseText = responseText.replace(/\n/g, " "); // Replace all line breaks with spaces
-      responseText = responseText.replace(/\*/g, ""); // Replace all line breaks with spaces
-      const noteFacts = responseText
-        .split("ENDFACT")
-        .map((fact) => fact.trim()); // Trim spaces from each fact
-      setNotesData({ ...notesData, noteSetFacts: noteFacts });
-      console.log("Note Facts", noteFacts, notesData.noteSetRaw);
-    });
+    await getFactsResponse(stripHtml(noteSetRawRef.current.innerHTML)).then(
+      async (results) => {
+        let responseText = results.response.candidates[0].content.parts[0].text;
+        // let responseText = results;
+        responseText = responseText.replace(/\n/g, " "); // Replace all line breaks with spaces
+        responseText = responseText.replace(/\*/g, ""); // Replace all asterisks with nothing
+        console.log("Response Text", responseText);
+
+        const noteFacts = {};
+        const sections = responseText.split(/\{\[(.*?)\]\}/); // Split by section headers
+
+        for (let i = 1; i < sections.length; i += 2) {
+          const sectionName = sections[i].trim();
+          const sectionContent = sections[i + 1]
+            .split("ENDFACT")
+            .map((fact) => fact.trim())
+            .filter((fact) => fact.length > 0);
+
+          if (!noteFacts[sectionName]) {
+            noteFacts[sectionName] = [];
+          }
+
+          noteFacts[sectionName].push(...sectionContent);
+        }
+
+        setNoteSetFacts(noteFacts);
+        console.log("Note Facts", noteFacts);
+      }
+    );
     setGeneratingNoteFacts(false);
+
     console.log("Ended generating");
   };
 
@@ -89,7 +120,7 @@ const EditNoteSet = () => {
       </Link>
       {/* Generating Notes Overlay */}
       {generatingNoteFacts && (
-        <div className="absolute w-screen h-screen bg-slate-900 bg-opacity-50 flex flex-col justify-center align-middle">
+        <div className="fixed w-screen h-screen bg-slate-900 bg-opacity-50 flex flex-col justify-center align-middle">
           <div className="text-white text-2xl font-bold bg-slate-600 mx-auto p-3 rounded-md flex flex-row gap-2">
             <div>Generating Note Facts</div>
             <svg
@@ -128,10 +159,11 @@ const EditNoteSet = () => {
           ref={noteSetNameRef}
         ></input>
         <h2 className="text-xl font-bold">Raw Notes</h2>
-        <textarea
-          className="w-[90%] mx-auto rounded-md h-80"
+        <div
+          className="w-[90%] mx-auto rounded-md max-h-80 overflow-scroll bg-white text-left"
           ref={noteSetRawRef}
-        ></textarea>
+          contentEditable={true}
+        ></div>
       </div>
       {/* Generate Raw Notes */}
       <button
@@ -141,14 +173,25 @@ const EditNoteSet = () => {
         Generate Note Facts
       </button>
       {/* NoteSetFacts */}
-      {notesData.noteSetFacts.length !== 0 && (
+      {noteSetFacts.length !== 0 && (
         <div className="bg-secondary flex flex-col w-[80%] mx-auto p-5 gap-2 rounded-md">
           <div className="text-2xl font-bold">Note Facts</div>
-          {notesData.noteSetFacts.map((value, index) => (
-            <div className="bg-white mx-auto p-1 rounded-md shadow-md">
-              {value}
-            </div>
-          ))}
+          {typeof noteSetFacts === "object" && !Array.isArray(noteSetFacts) ? (
+            Object.entries(noteSetFacts).map(([section, contents], index) => {
+              return (
+                <div className="flex flex-col gap-2">
+                  <div className="text-xl font-bold">{section}</div>
+                  {contents.map((value, index) => (
+                    <div className="bg-white mx-auto p-1 rounded-md shadow-md">
+                      {value}
+                    </div>
+                  ))}
+                </div>
+              );
+            })
+          ) : (
+            <div>Outdated Note Set</div>
+          )}
         </div>
       )}
       {/* Save Note Set Data */}

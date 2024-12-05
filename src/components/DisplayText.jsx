@@ -6,14 +6,14 @@ const DisplayText = ({ text, cursorLocation }) => {
     <div className={`h-[${maxLines * 1}em] overflow-hidden`}>
       <div
         className={
-          "flex flex-row font-mono flex-wrap pointer-events-none text-8xl whitespace-nowrap"
+          "flex flex-row font-mono flex-wrap pointer-events-none text-6xl whitespace-nowrap"
         }
       >
         {text.map((wordData, index) => (
           <>
             <Word
               wordData={wordData}
-              key={index}
+              key={"word" + index}
               wordCursorLocation={
                 cursorLocation[0] === index ? cursorLocation[1] : -1
               }
@@ -54,7 +54,7 @@ const Word = ({ wordData, wordCursorLocation, needsSpace }) => {
     <div className="flex flex-row">
       {modifiedWordData.map((letterData, index) => {
         return (
-          <div className="relative" key={index}>
+          <div className="relative" key={"letter" + index}>
             <Letter
               hasCursor={index === wordCursorLocation}
               letterText={letterData.value}
