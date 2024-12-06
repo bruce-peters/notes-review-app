@@ -147,7 +147,7 @@ const EditNoteSet = () => {
         </div>
       )}
       {/* Title */}
-      <div className="text-3xl m-8 font-bold">
+      <div className="text-3xl m-8 font-bold text-slate-400">
         Edit {notesData.noteSetName ?? ""}
       </div>
       {/* Raw Notes Editor */}

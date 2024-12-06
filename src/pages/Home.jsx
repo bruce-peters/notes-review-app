@@ -12,8 +12,8 @@ const Home = () => {
 
   if (user.currentUser === null) {
     return (
-      <div className="flex flex-col justify-center align-middle h-full">
-        <div className="text-center text-white bg-primary text-2xl p-5">
+      <div className="flex flex-col justify-center align-middle h-screen">
+        <div className="text-center text-white text-2xl p-5">
           Please Sign in to view your notes
           <Link
             className="block text-xl bg-secondary-light text-black mx-auto w-fit p-2 rounded-md mt-4 hover:scale-105 hover:shadow-lg transition-transform"
@@ -36,7 +36,7 @@ const Home = () => {
       >
         Sign Out
       </button>
-      <h1 className="mt-12 text-5xl font-bold">
+      <h1 className="mt-12 text-5xl font-bold text-slate-200">
         Hello,{" "}
         <span className="text-primary">
           {user.currentUser
