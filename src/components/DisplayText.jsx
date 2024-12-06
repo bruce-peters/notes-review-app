@@ -3,25 +3,23 @@ import { useEffect, useRef } from "react";
 const DisplayText = ({ text, cursorLocation }) => {
   const maxLines = 3;
   return (
-    <div className={`h-[${maxLines * 1}em] overflow-hidden`}>
-      <div
-        className={
-          "flex flex-row font-mono flex-wrap pointer-events-none text-6xl whitespace-nowrap"
-        }
-      >
-        {text.map((wordData, index) => (
-          <>
-            <Word
-              wordData={wordData}
-              key={"word" + index}
-              wordCursorLocation={
-                cursorLocation[0] === index ? cursorLocation[1] : -1
-              }
-              needsSpace={index !== text.length - 1}
-            />
-          </>
-        ))}
-      </div>
+    <div
+      className={
+        "flex flex-row font-mono flex-wrap pointer-events-none text-6xl whitespace-nowrap"
+      }
+    >
+      {text.map((wordData, index) => (
+        <>
+          <Word
+            wordData={wordData}
+            key={"word" + index}
+            wordCursorLocation={
+              cursorLocation[0] === index ? cursorLocation[1] : -1
+            }
+            needsSpace={index !== text.length - 1}
+          />
+        </>
+      ))}
     </div>
   );
 };

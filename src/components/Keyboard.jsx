@@ -1,4 +1,4 @@
-const Keyboard = ({ highlightedKeys }) => {
+const Keyboard = ({ pressedKey }) => {
   const keyboardLayout = [
     [
       "`",
@@ -32,7 +32,7 @@ const Keyboard = ({ highlightedKeys }) => {
       "'",
       "Enter",
     ],
-    ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift"],
+    ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Right Shift"],
     ["Control", "Alt", "Space", "Alt"],
   ];
 
@@ -46,9 +46,11 @@ const Keyboard = ({ highlightedKeys }) => {
           {row.map((key, keyIndex) => (
             <div
               key={keyIndex}
-              className={`bg-slate-700 ${
-                highlightedKeys.includes(key) ? "bg-primary" : ""
-              } text-slate-400 text-2xl h-10 w-fit min-w-8 text-center rounded-md padding-2 `}
+              className={` text-2xl h-10 w-fit min-w-8 text-center rounded-md padding-2 transition-all ${
+                pressedKey?.toLowerCase() === key.toLowerCase()
+                  ? "bg-primary text-white shadow-primary shadow-sm"
+                  : "bg-slate-700 text-slate-400"
+              }`}
             >
               {key}
             </div>

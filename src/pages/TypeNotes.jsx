@@ -15,16 +15,103 @@ function shuffleArray(array) {
   return array;
 }
 
+const fillerWords = [
+  "a",
+  "an",
+  "the",
+  "and",
+  "but",
+  "or",
+  "nor",
+  "for",
+  "so",
+  "yet",
+  "after",
+  "although",
+  "as",
+  "because",
+  "before",
+  "even",
+  "if",
+  "in",
+  "once",
+  "since",
+  "though",
+  "unless",
+  "until",
+  "when",
+  "where",
+  "while",
+  "about",
+  "above",
+  "across",
+  "after",
+  "against",
+  "along",
+  "among",
+  "around",
+  "at",
+  "before",
+  "behind",
+  "below",
+  "beneath",
+  "beside",
+  "between",
+  "beyond",
+  "by",
+  "despite",
+  "down",
+  "during",
+  "except",
+  "for",
+  "from",
+  "in",
+  "inside",
+  "into",
+  "like",
+  "near",
+  "of",
+  "off",
+  "on",
+  "onto",
+  "out",
+  "outside",
+  "over",
+  "past",
+  "since",
+  "through",
+  "throughout",
+  "to",
+  "toward",
+  "under",
+  "underneath",
+  "until",
+  "up",
+  "upon",
+  "with",
+  "within",
+  "without",
+];
+
 const TypeNotes = () => {
   const { noteSetId } = useParams();
   const [targetText, setTargetText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [notesData, setNotesData] = useNoteSet(noteSetId);
-  const [factsList, setFactsList] = useState([["", ""]]);
+  const [factsList, setFactsList] = useState([
+    { sectionName: "", sectionContent: [""] },
+  ]);
   const [sectionName, setSectionName] = useState("");
   const user = useAuth();
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
-  const [currentFactIteration, setCurrentFactIteration] = useState(0);
+  const [currentFactIteration, setCurrentFactIteration] = useState(1);
+  const [settings, setSettings] = useState({
+    repetitions: 5,
+    casing: true,
+    punctuation: true,
+    omitFillerWords: false,
+  });
+  const [pressedKey, setPressedKey] = useState(null);
 
   // When the page is loaded, add an event listener for the keydown event
   useEffect(() => {
@@ -37,12 +124,19 @@ const TypeNotes = () => {
     };
   }, []);
 
+  //when the page is loaded, create an event listener for the keyup event
+  useEffect(() => {
+    const handleKeyUp = () => setPressedKey(null);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => window.removeEventListener("keyup", handleKeyUp);
+  }, []);
+
   useEffect(() => {
     // make facts list a set of facts and sections
     if (notesData) {
       const factsArray = [];
-      notesData.noteSetFacts.forEach(({ sectionName, sectionFacts }) => {
-        sectionFacts.forEach((fact) => {
+      notesData.noteSetFacts.forEach(({ sectionName, sectionContent }) => {
+        sectionContent.forEach((fact) => {
           factsArray.push([sectionName, fact]);
         });
       });
@@ -53,16 +147,44 @@ const TypeNotes = () => {
   // When the currentFactIndex or factsList changes, set the target text to the current fact
   useEffect(() => {
     if (notesData) {
-      const newTargetText = factsList[currentFactIndex][1];
+      let newTargetText = factsList[currentFactIndex][1];
+      if (!settings.casing) {
+        newTargetText = newTargetText.toLowerCase();
+      }
+      if (!settings.punctuation) {
+        newTargetText = newTargetText.replace(/[^a-zA-Z0-9\s]/g, "");
+      }
+      if (settings.omitFillerWords) {
+        newTargetText = newTargetText
+          .split(" ")
+          .filter((word) => !fillerWords.includes(word.toLowerCase()))
+          .join(" ");
+      }
       setTargetText(newTargetText);
       setSectionName(factsList[currentFactIndex][0]);
     }
-  }, [currentFactIndex, factsList]);
+  }, [
+    currentFactIndex,
+    factsList,
+    settings.casing,
+    settings.punctuation,
+    settings.omitFillerWords,
+  ]);
+
+  useEffect(() => {
+    if (
+      settings.repetitions !== "" &&
+      currentFactIteration > settings.repetitions
+    ) {
+      handleNextFact();
+    }
+  }, [currentFactIteration, settings.repetitions]);
 
   // Algorithm for handling user input
   const handleKeyDown = (e) => {
     //Check if the key pressed is a letter or typeable character
     const isTypeable = e.key.length === 1;
+    setPressedKey(e.key);
     switch (e.key) {
       case "Enter":
         if (e.ctrlKey) {
@@ -70,9 +192,9 @@ const TypeNotes = () => {
           handleNextFact();
         } else {
           setCurrentFactIteration((prev) => prev + 1);
-          // Clear the user input
-          setUserInput("");
         }
+        // Clear the user input
+        setUserInput("");
         break;
       case "Backspace":
         // check if it's a ctrl-backspace
@@ -100,15 +222,19 @@ const TypeNotes = () => {
     }
   };
 
-  useEffect(() => {
-    if (currentFactIteration > 5) {
-      handleNextFact();
-    }
-  }, [currentFactIteration]);
-
   const handleNextFact = () => {
     setCurrentFactIndex((prevIndex) => prevIndex + 1);
-    setCurrentFactIteration(0);
+    setCurrentFactIteration(1);
+  };
+
+  const handleSettingsChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSettings((prevSettings) => {
+      return {
+        ...prevSettings,
+        [name]: type === "checkbox" ? checked : value,
+      };
+    });
   };
 
   const hasFinishedTyping = () => {
@@ -189,7 +315,7 @@ const TypeNotes = () => {
   };
 
   return (
-    <div className="relative bg-slate-800 h-screen p-5 overflow-hidden flex flex-col justify-between">
+    <div className="relative bg-slate-800 h-screen p-5 overflow-hidden flex flex-col gap-10">
       {notesData ? (
         <>
           <Link
@@ -202,11 +328,52 @@ const TypeNotes = () => {
             {currentFactIteration}
           </div>
           <div className="self-center text-primary text-3xl">{sectionName}</div>
-          <DisplayText
-            text={getCurrentDisplayedText(userInput)}
-            cursorLocation={getTypingCursorLocation(userInput)}
-          />
-          <Keyboard highlightedKeys={[]} />
+          {/* Settings */}
+          <div className="self-center flex flex-row gap-2">
+            {[
+              {
+                name: "repetitions",
+                label: "Repetitions",
+                type: "number",
+                className: "w-16",
+              },
+              { name: "casing", label: "Casing", type: "checkbox" },
+              { name: "punctuation", label: "Punctuation", type: "checkbox" },
+              {
+                name: "omitFillerWords",
+                label: "Omit Filler Words",
+                type: "checkbox",
+              },
+            ].map(({ name, label, type, className }) => (
+              <label
+                key={name}
+                className={`flex items-center gap-2 ${
+                  type === "checkbox" && settings[name]
+                    ? "bg-slate-500"
+                    : "bg-slate-600"
+                } p-1 rounded-md select-none`}
+              >
+                {label}
+                <input
+                  className={`bg-slate-800 text-primary p-1 rounded-md ${
+                    className || ""
+                  } ${type === "checkbox" && "hidden"}`}
+                  type={type}
+                  name={name}
+                  value={type === "checkbox" ? undefined : settings[name]}
+                  checked={type === "checkbox" ? settings[name] : undefined}
+                  onChange={handleSettingsChange}
+                />
+              </label>
+            ))}
+          </div>
+          <div className="flex-grow flex items-center">
+            <DisplayText
+              text={getCurrentDisplayedText(userInput)}
+              cursorLocation={getTypingCursorLocation(userInput)}
+            />
+          </div>
+          <Keyboard pressedKey={pressedKey} />
         </>
       ) : (
         <div>Loading...</div>

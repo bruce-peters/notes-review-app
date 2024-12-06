@@ -36,11 +36,9 @@ const useNoteSet = (noteSetId) => {
             `users/${user.currentUser.uid}/note-sets`,
             noteSetId
           );
-          console.log("Note set ref", noteSetRef);
           const docSnapshot = await getDoc(noteSetRef);
 
           if (docSnapshot.exists()) {
-            console.log("Document data:", docSnapshot.data());
             setNoteSetData({ ...docSnapshot.data(), noteSetId });
           } else {
             console.log("No such document!");

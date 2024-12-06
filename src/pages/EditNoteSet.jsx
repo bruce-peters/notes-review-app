@@ -50,13 +50,15 @@ const EditNoteSet = () => {
   };
 
   const handleSave = async () => {
-    saveNoteSetData({
+    await saveNoteSetData({
       ...notesData,
       noteSetRaw: noteSetRawRef.current.innerHTML,
       noteSetName: noteSetNameRef.current.value,
       noteSetFacts: noteSetFacts,
     });
+    navigate(`/type/${noteSetId}`);
   };
+
   const generateNoteFacts = async () => {
     if (notesData.noteSetFacts.length > 0) {
       // Ask the user if they want to proceed
@@ -114,7 +116,7 @@ const EditNoteSet = () => {
         to="/"
         className="self-start m-2 p-2 bg-primary text-white rounded-md hover:scale-105 hover:shadow-lg transition-all"
       >
-        {"<-"} Back
+        Back
       </Link>
       {/* Generating Notes Overlay */}
       {generatingNoteFacts && (
