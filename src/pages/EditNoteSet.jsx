@@ -147,8 +147,14 @@ const EditNoteSet = () => {
         </div>
       )}
       {/* Title */}
-      <div className="text-3xl m-8 font-bold text-slate-400">
+      <div className="text-3xl mt-8 font-bold text-slate-400">
         Edit {notesData.noteSetName ?? ""}
+      </div>
+      <div className="text-lg mb-8 text-slate-400">
+        Name your notes, paste your notes into the Raw Notes Section, then
+        generate your notes set.
+        <br />
+        Make sure to <strong>save your data</strong>, it won't autosave
       </div>
       {/* Raw Notes Editor */}
       <div className="bg-secondary flex flex-col align-center p-2 gap-4 w-[90%] mx-auto rounded-md shadow-md">
@@ -158,7 +164,13 @@ const EditNoteSet = () => {
           className="w-[90%] mx-auto rounded-md"
           ref={noteSetNameRef}
         ></input>
-        <h2 className="text-xl font-bold">Raw Notes</h2>
+        <h2 className="text-xl font-bold">
+          Raw Notes
+          <h3 className="text-md font-normal">
+            Paste your notes here. You can copy from google docs, or any other
+            note taking platform
+          </h3>
+        </h2>
         <div
           className="w-[90%] mx-auto rounded-md max-h-80 overflow-scroll bg-white text-left"
           ref={noteSetRawRef}
