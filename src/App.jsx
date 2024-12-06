@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Layout from "./components/Layout.jsx";
 import EditNoteSet from "./pages/EditNoteSet.jsx";
@@ -12,7 +12,7 @@ function App() {
   return (
     <AuthProvider>
       <Layout>
-        <Router basename={BASE_PATH}>
+        <Router>
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route path="/edit/:noteSetId" element={<EditNoteSet />} />
