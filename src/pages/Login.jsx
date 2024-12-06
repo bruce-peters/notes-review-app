@@ -59,12 +59,22 @@ const Login = () => {
     }
   };
 
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="w-screen h-screen flex flex-col justify-center">
       {isLogin ? (
         <div className="mx-auto bg-white p-3 rounded-md shadow-xl text-lg text-center flex flex-col align-middle justify-center">
           <h2 className="text-xl font-bold">Login</h2>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleEmailLogin}>
             <div>
               <label>Email:</label>
               <input

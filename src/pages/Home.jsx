@@ -39,7 +39,9 @@ const Home = () => {
       <h1 className="mt-12 text-5xl font-bold">
         Hello,{" "}
         <span className="text-primary">
-          {user.currentUser ? user.currentUser.displayName : ""}
+          {user.currentUser
+            ? user.currentUser.displayName ?? user.currentUser.email
+            : ""}
         </span>
       </h1>
       <NoteSetsView noteSets={noteSets} />
