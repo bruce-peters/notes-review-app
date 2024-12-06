@@ -28,7 +28,9 @@ const EditNoteSet = () => {
     useNoteSet(noteSetId);
   const noteSetRawRef = useRef(null);
   const noteSetNameRef = useRef(null);
-  const [noteSetFacts, setNoteSetFacts] = useState({ "": [""] });
+  const [noteSetFacts, setNoteSetFacts] = useState([
+    { sectionName: "", sectionContent: [""] },
+  ]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,7 +81,7 @@ const EditNoteSet = () => {
         responseText = responseText.replace(/\*/g, ""); // Replace all asterisks with nothing
         console.log("Response Text", responseText);
 
-        const noteFacts = {};
+        const noteFacts = [];
         const sections = responseText.split(/\{\[(.*?)\]\}/); // Split by section headers
 
         for (let i = 1; i < sections.length; i += 2) {
@@ -89,11 +91,7 @@ const EditNoteSet = () => {
             .map((fact) => fact.trim())
             .filter((fact) => fact.length > 0);
 
-          if (!noteFacts[sectionName]) {
-            noteFacts[sectionName] = [];
-          }
-
-          noteFacts[sectionName].push(...sectionContent);
+          noteFacts.push({ sectionName, sectionContent });
         }
 
         setNoteSetFacts(noteFacts);
@@ -176,13 +174,17 @@ const EditNoteSet = () => {
       {noteSetFacts.length !== 0 && (
         <div className="bg-secondary flex flex-col w-[80%] mx-auto p-5 gap-2 rounded-md">
           <div className="text-2xl font-bold">Note Facts</div>
-          {typeof noteSetFacts === "object" && !Array.isArray(noteSetFacts) ? (
-            Object.entries(noteSetFacts).map(([section, contents], index) => {
+          {Array.isArray(noteSetFacts) ? (
+            noteSetFacts.map(({ sectionName, sectionContent }, index) => {
+              console.log(sectionName, sectionContent);
               return (
-                <div className="flex flex-col gap-2">
-                  <div className="text-xl font-bold">{section}</div>
-                  {contents.map((value, index) => (
-                    <div className="bg-white mx-auto p-1 rounded-md shadow-md">
+                <div className="flex flex-col gap-2" key={index}>
+                  <div className="text-xl font-bold">{sectionName}</div>
+                  {sectionContent.map((value, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white mx-auto p-1 rounded-md shadow-md"
+                    >
                       {value}
                     </div>
                   ))}

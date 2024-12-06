@@ -41,13 +41,11 @@ const TypeNotes = () => {
     // make facts list a set of facts and sections
     if (notesData) {
       const factsArray = [];
-      Object.entries(notesData.noteSetFacts).forEach(
-        ([sectionName, sectionFacts]) => {
-          sectionFacts.forEach((fact) => {
-            factsArray.push([sectionName, fact]);
-          });
-        }
-      );
+      notesData.noteSetFacts.forEach(({ sectionName, sectionFacts }) => {
+        sectionFacts.forEach((fact) => {
+          factsArray.push([sectionName, fact]);
+        });
+      });
       setFactsList(factsArray);
     }
   }, [notesData]);
@@ -67,7 +65,14 @@ const TypeNotes = () => {
     const isTypeable = e.key.length === 1;
     switch (e.key) {
       case "Enter":
-        handleNextFact();
+        if (e.ctrlKey) {
+          console.log("CTRL ENTER");
+          handleNextFact();
+        } else {
+          setCurrentFactIteration((prev) => prev + 1);
+          // Clear the user input
+          setUserInput("");
+        }
         break;
       case "Backspace":
         // check if it's a ctrl-backspace
@@ -97,15 +102,13 @@ const TypeNotes = () => {
 
   useEffect(() => {
     if (currentFactIteration > 5) {
-      setCurrentFactIndex((prevIndex) => prevIndex + 1);
-      setCurrentFactIteration(0);
+      handleNextFact();
     }
   }, [currentFactIteration]);
 
   const handleNextFact = () => {
-    setCurrentFactIteration((prev) => prev + 1);
-    // Clear the user input
-    setUserInput("");
+    setCurrentFactIndex((prevIndex) => prevIndex + 1);
+    setCurrentFactIteration(0);
   };
 
   const hasFinishedTyping = () => {
