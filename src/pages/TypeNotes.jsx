@@ -106,7 +106,7 @@ const TypeNotes = () => {
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
   const [currentFactIteration, setCurrentFactIteration] = useState(1);
   const [settings, setSettings] = useState({
-    repetitions: 5,
+    repetitions: 3,
     casing: true,
     punctuation: true,
     omitFillerWords: false,
@@ -230,9 +230,15 @@ const TypeNotes = () => {
   const handleSettingsChange = (e) => {
     const { name, value, type, checked } = e.target;
     setSettings((prevSettings) => {
+      let newValue = type === "checkbox" ? checked : value;
+      if (name === "repetitions" && newValue > 10) {
+        newValue = 10;
+      } else if (name === "repetitions" && newValue < 1) {
+        newValue = 1;
+      }
       return {
         ...prevSettings,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: newValue,
       };
     });
   };
