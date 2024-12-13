@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const DisplayText = ({ text, cursorLocation }) => {
+const DisplayText = ({ text, cursorLocation, activeRecall }) => {
   const maxLines = 3;
   return (
     <div
@@ -13,6 +13,7 @@ const DisplayText = ({ text, cursorLocation }) => {
           <Word
             wordData={wordData}
             key={"word" + index}
+            activeRecall={activeRecall}
             wordCursorLocation={
               cursorLocation[0] === index ? cursorLocation[1] : -1
             }
@@ -39,7 +40,7 @@ const getColorFromStatus = (status) => {
   }
 };
 
-const Word = ({ wordData, wordCursorLocation, needsSpace }) => {
+const Word = ({ wordData, wordCursorLocation, needsSpace, activeRecall }) => {
   // Create a copy of wordData to avoid mutating the original array
   const modifiedWordData = [...wordData];
 
@@ -55,7 +56,11 @@ const Word = ({ wordData, wordCursorLocation, needsSpace }) => {
           <div className="relative" key={"letter" + index}>
             <Letter
               hasCursor={index === wordCursorLocation}
-              letterText={letterData.value}
+              letterText={
+                activeRecall && index !== 0 && letterData.value !== " "
+                  ? "."
+                  : letterData.value
+              }
               status={letterData.status}
             />
           </div>

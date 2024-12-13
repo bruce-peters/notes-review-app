@@ -6,6 +6,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import useNoteSet from "../state/useNoteSet";
 import { Link, useParams } from "react-router-dom";
+import ReactFloater from "react-floater";
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -110,6 +111,7 @@ const TypeNotes = () => {
     casing: true,
     punctuation: true,
     omitFillerWords: false,
+    activeRecall: false,
   });
   const [pressedKey, setPressedKey] = useState(null);
 
@@ -172,9 +174,13 @@ const TypeNotes = () => {
   ]);
 
   useEffect(() => {
+    // if we have an active recall repetition, allow for an additional repetition
     if (
       settings.repetitions !== "" &&
-      currentFactIteration > settings.repetitions
+      currentFactIteration >
+        (settings.activeRecall
+          ? settings.repetitions + 1
+          : settings.repetitions)
     ) {
       handleNextFact();
     }
@@ -244,10 +250,9 @@ const TypeNotes = () => {
   };
 
   const hasFinishedTyping = () => {
-    return (
-      targetText !== "" &&
-      targetText.split(" ").length - 2 < userInput.split(" ").length
-    );
+    const targetSpaces = (targetText.match(/ /g) || []).length;
+    const userSpaces = (userInput.match(/ /g) || []).length;
+    return userSpaces === targetSpaces + 1;
   };
 
   const getCurrentDisplayedText = (currentInput) => {
@@ -320,6 +325,9 @@ const TypeNotes = () => {
     return [currentWordIndex, currentLetterIndex];
   };
 
+  const isActiveRecall = () =>
+    settings.activeRecall && currentFactIteration === settings.repetitions + 1;
+
   return (
     <div className="relative bg-slate-800 h-screen p-5 overflow-hidden flex flex-col gap-10">
       {notesData ? (
@@ -331,7 +339,8 @@ const TypeNotes = () => {
             Back
           </Link>
           <div className="absolute top-2 right-4 text-4xl text-blue-400 font-bold">
-            {currentFactIteration}
+            {/* Check if were in active recall and or show the current iteration */}
+            {isActiveRecall() ? "Active Recall" : currentFactIteration}
           </div>
           <div className="self-center text-primary text-3xl">{sectionName}</div>
           {/* Settings */}
@@ -342,41 +351,67 @@ const TypeNotes = () => {
                 label: "Repetitions",
                 type: "number",
                 className: "w-16",
+                description: "Number of times you want to review each fact",
               },
-              { name: "casing", label: "Casing", type: "checkbox" },
-              { name: "punctuation", label: "Punctuation", type: "checkbox" },
+              {
+                name: "casing",
+                label: "Casing",
+                type: "checkbox",
+                description:
+                  "Toggles weather everything is normal or just lowercase",
+              },
+              {
+                name: "punctuation",
+                label: "Punctuation",
+                type: "checkbox",
+                description:
+                  "Toggles punctuation like ':' and '.' so that you can focus on reviewing the most important information",
+              },
               {
                 name: "omitFillerWords",
                 label: "Omit Filler Words",
                 type: "checkbox",
+                description:
+                  "Omit filler words like 'a', 'the', etc. so that you can focus on reviewing the most important information",
               },
-            ].map(({ name, label, type, className }) => (
-              <label
-                key={name}
-                className={`flex items-center gap-2 ${
-                  type === "checkbox" && settings[name]
-                    ? "bg-slate-500"
-                    : "bg-slate-600"
-                } p-1 rounded-md select-none`}
-              >
-                {label}
-                <input
-                  className={`bg-slate-800 text-primary p-1 rounded-md ${
-                    className || ""
-                  } ${type === "checkbox" && "hidden"}`}
-                  type={type}
-                  name={name}
-                  value={type === "checkbox" ? undefined : settings[name]}
-                  checked={type === "checkbox" ? settings[name] : undefined}
-                  onChange={handleSettingsChange}
-                />
-              </label>
+              {
+                name: "activeRecall",
+                label: "Active Recall",
+                type: "checkbox",
+                description:
+                  "Toggles active recall mode, which adds an additional repetition where the entire fact except for the first letter of each non-filler word is hidden",
+              },
+            ].map(({ name, label, type, className, description }) => (
+              <ReactFloater content={description} event="hover" eventDelay={0}>
+                <label
+                  key={name}
+                  className={`flex items-center gap-2 ${
+                    type === "checkbox" && settings[name]
+                      ? "bg-slate-500"
+                      : "bg-slate-600"
+                  } p-1 rounded-md select-none`}
+                >
+                  {label}
+                  <input
+                    className={`bg-slate-800 text-primary p-1 rounded-md ${
+                      className || ""
+                    } ${type === "checkbox" && "hidden"}`}
+                    type={type}
+                    name={name}
+                    value={type === "checkbox" ? undefined : settings[name]}
+                    checked={type === "checkbox" ? settings[name] : undefined}
+                    onChange={handleSettingsChange}
+                  />
+                </label>
+              </ReactFloater>
             ))}
           </div>
           <div className="flex-grow flex items-center">
             <DisplayText
               text={getCurrentDisplayedText(userInput)}
               cursorLocation={getTypingCursorLocation(userInput)}
+              activeRecall={isActiveRecall()}
+              fillerWords
             />
           </div>
           <Keyboard pressedKey={pressedKey} />
