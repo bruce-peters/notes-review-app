@@ -14,3 +14,5 @@ So, I decided to finish making the app and after some prompt engineering and per
 
 
 (I know there are typos i'm to lazy to fix them)
+
+[Link to the site](https://bobcat999.github.io/notes-review-app/)
