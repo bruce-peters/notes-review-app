@@ -23,6 +23,7 @@ const debugResponse = async (dummy) => {
 const EditNoteSet = () => {
   const { noteSetId } = useParams();
   const [generatingNoteFacts, setGeneratingNoteFacts] = useState(false);
+  const [generateError, setGenerateError] = useState("");
   const user = useAuth();
   const [notesData, setNotesData, saveNoteSetData, deleteNoteSet] =
     useNoteSet(noteSetId);
@@ -74,33 +75,50 @@ const EditNoteSet = () => {
     }
 
     console.log("started generating");
+    setGenerateError("");
     setGeneratingNoteFacts(true);
-    await getFactsResponse(stripHtml(noteSetRawRef.current.innerHTML)).then(
-      async (results) => {
-        let responseText = results.response.candidates[0].content.parts[0].text;
-        // let responseText = results;
-        responseText = responseText.replace(/\n/g, " "); // Replace all line breaks with spaces
-        responseText = responseText.replace(/\*/g, ""); // Replace all asterisks with nothing
-        console.log("Response Text", responseText);
+    try {
+      const results = await getFactsResponse(
+        stripHtml(noteSetRawRef.current.innerHTML)
+      );
+      let responseText = results.response.text();
+      // let responseText = results;
+      responseText = responseText.replace(/\n/g, " "); // Replace all line breaks with spaces
+      responseText = responseText.replace(/\*/g, ""); // Replace all asterisks with nothing
+      console.log("Response Text", responseText);
 
-        const noteFacts = [];
-        const sections = responseText.split(/\{\[(.*?)\]\}/); // Split by section headers
+      const noteFacts = [];
+      // Split by section headers, written as {[Title]} or sometimes {Title} by the lite model
+      const sections = responseText.split(/\{\[?([^{}]*?)\]?\}/);
 
-        for (let i = 1; i < sections.length; i += 2) {
-          const sectionName = sections[i].trim();
-          const sectionContent = sections[i + 1]
-            .split("ENDFACT")
-            .map((fact) => fact.trim())
-            .filter((fact) => fact.length > 0);
+      for (let i = 1; i < sections.length; i += 2) {
+        const sectionName = sections[i].trim();
+        const sectionContent = sections[i + 1]
+          .split("ENDFACT")
+          .map((fact) => fact.trim())
+          .filter((fact) => fact.length > 0);
 
-          noteFacts.push({ sectionName, sectionContent });
-        }
-
-        setNoteSetFacts(noteFacts);
-        console.log("Note Facts", noteFacts);
+        noteFacts.push({ sectionName, sectionContent });
       }
-    );
-    setGeneratingNoteFacts(false);
+
+      // Keep the old facts if the response wasn't in the expected format
+      if (noteFacts.length === 0) {
+        throw new Error("The response didn't contain any note facts.");
+      }
+
+      setNoteSetFacts(noteFacts);
+      console.log("Note Facts", noteFacts);
+    } catch (error) {
+      console.error("Error generating note facts", error);
+      // 503 means the model is overloaded, 429 means the rate limit was hit
+      const message =
+        error.status === 503 || error.status === 429
+          ? "Gemini is busy right now. Wait a minute and try again."
+          : error.message;
+      setGenerateError(`Couldn't generate note facts. ${message}`);
+    } finally {
+      setGeneratingNoteFacts(false);
+    }
 
     console.log("Ended generating");
   };
@@ -184,6 +202,11 @@ const EditNoteSet = () => {
       >
         Generate Note Facts
       </button>
+      {generateError && (
+        <div className="w-[90%] mx-auto text-red-600 font-bold">
+          {generateError}
+        </div>
+      )}
       {/* NoteSetFacts */}
       {noteSetFacts.length !== 0 && (
         <div className="bg-secondary flex flex-col w-[80%] mx-auto p-5 gap-2 rounded-md">
