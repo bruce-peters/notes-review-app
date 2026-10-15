@@ -10,6 +10,11 @@ const Home = () => {
   const user = useAuth();
   const noteSets = useNoteSets();
 
+  // Wait for Firebase to restore the session so signed-in users don't see the sign-in prompt flash
+  if (user.loading) {
+    return null;
+  }
+
   if (user.currentUser === null) {
     return (
       <div className="flex flex-col justify-center align-middle h-screen">
