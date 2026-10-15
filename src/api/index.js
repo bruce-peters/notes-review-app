@@ -1,11 +1,18 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = "AIzaSyDscDJ3cpaKBficC3FL7RSvn0psTzhJARI";
+// Gemini API key from https://aistudio.google.com/apikey, read from .env (see .env.example).
+// The previously hard-coded key was flagged by Google as leaked and no longer works.
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
 // gemini-3.5-flash is often overloaded, so fall back to the lite model when it is
 const models = ["gemini-3.5-flash", "gemini-3.5-flash-lite"];
 
 export const getFactsResponse = async (noteSetRaw) => {
+  if (!apiKey) {
+    throw new Error(
+      "No Gemini API key configured. Set VITE_GEMINI_API_KEY in .env and rebuild."
+    );
+  }
   const generationConfig = {
     temperature: 1,
     topP: 0.95,
