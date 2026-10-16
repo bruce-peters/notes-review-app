@@ -35,4 +35,8 @@ export default [
       ],
     },
   },
+  {
+    files: ['src/tests/**/*.{js,jsx}', 'src/setupTests.js'],
+    languageOptions: { globals: { ...globals.browser, ...globals.jest } },
+  },
 ]

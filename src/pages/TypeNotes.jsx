@@ -147,6 +147,11 @@ const TypeNotes = () => {
   // When the currentFactIndex or factsList changes, set the target text to the current fact
   useEffect(() => {
     if (notesData && factsList.length > 0) {
+      // Past the last fact: start over from the first one instead of crashing
+      if (currentFactIndex >= factsList.length) {
+        setCurrentFactIndex(0);
+        return;
+      }
       let newTargetText = factsList[currentFactIndex][1];
       if (!settings.casing) {
         newTargetText = newTargetText.toLowerCase();
